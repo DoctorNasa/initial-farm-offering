@@ -1,7 +1,14 @@
-var HDWalletProvider = require("truffle-hdwallet-provider");
-
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const Web3 = require('web3');
 const fs = require('fs');
-const { infuraProjectId, privateKeys, etherApiKey, bscApiKey } = JSON.parse(fs.readFileSync('.secret').toString().trim());
+const { infuraProjectId, privateKeys, etherApiKey, mainnetBkcPrivateKeys, bscApiKey } = JSON.parse(fs.readFileSync('.secret').toString().trim());
+
+
+const bitkubMainnetProvider = new HDWalletProvider({
+  privateKeys: mainnetBkcPrivateKeys,
+  providerOrUrl: `https://rpc.bitkubchain.io`
+});
+
 module.exports = {
   // Uncommenting the defaults below
   // provides for an easier quick-start with Ganache.
@@ -28,7 +35,13 @@ module.exports = {
       },
       network_id: "97"
     },
-
+    bitkubMainnet: {
+      provider: () => bitkubMainnetProvider,
+      network_id: '96',
+      gas: 5500000,
+      gasPrice: Web3.utils.toWei('5', 'gwei'),
+      skipDryRun: true,
+    },
     bscMainnet: {
       provider: function () {
         return new HDWalletProvider("", "https://bsc-dataseed.binance.org")
